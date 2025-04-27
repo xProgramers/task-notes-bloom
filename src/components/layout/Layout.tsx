@@ -1,8 +1,21 @@
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar, BookOpen, LayoutDashboard, Plus } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useEffect, useState } from "react";
+
+// Create and export the Layout component that wraps the content with the Sidebar
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 p-6 ml-0 md:ml-64 bg-[#0A0F0D] text-[#C4CBCA]">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 export function Sidebar() {
   const activeView = useStore((state) => state.activeView);
