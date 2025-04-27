@@ -4,18 +4,11 @@ import { StatCard } from "@/components/ui/stat-card";
 import { ProgressCircle } from "@/components/ui/progress-circle";
 import useStore from "@/store/useStore";
 import { CalendarIcon, CheckIcon, ClockIcon, ListIcon } from "lucide-react";
-import { useMemo } from "react";
 
 export function DashboardSummary() {
-  // Use useMemo to cache the stats calculation
-  const stats = useMemo(() => {
-    return useStore.getState().getTaskStats();
-  }, []);
-  
-  // Use useMemo to cache the today's tasks
-  const todayTasksCount = useMemo(() => {
-    return useStore.getState().getTasksDueToday().length;
-  }, []);
+  // Use the selector pattern to subscribe to specific state
+  const stats = useStore((state) => state.getTaskStats());
+  const todayTasksCount = useStore((state) => state.getTasksDueToday().length);
   
   return (
     <div className="grid gap-6">

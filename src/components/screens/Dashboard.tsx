@@ -3,14 +3,13 @@ import { DashboardSummary } from "@/components/dashboard/DashboardSummary";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
 import useStore from "@/store/useStore";
-import { useMemo } from "react";
 
 export function Dashboard() {
-  // Use useMemo to cache the tasks due today
-  const todayTasks = useMemo(() => {
+  // Use the selector pattern to subscribe to tasks due today
+  const todayTasks = useStore((state) => {
     const today = new Date().toISOString().split('T')[0];
-    return useStore.getState().tasks.filter(task => task.dueDate === today);
-  }, []);
+    return state.tasks.filter(task => task.dueDate === today);
+  });
   
   return (
     <div className="space-y-10">
