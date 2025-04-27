@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Calendar, BookOpen, LayoutDashboard, Plus } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useEffect, useState } from "react";
+import { TaskForm } from "../tasks/TaskForm";
 
 export function Sidebar() {
   const activeView = useStore((state) => state.activeView);
   const setActiveView = useStore((state) => state.setActiveView);
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     const checkSize = () => {
@@ -21,13 +23,13 @@ export function Sidebar() {
       }
     };
     
-    // Verificar na inicialização
+    // Check on initialization
     checkSize();
     
-    // Adicionar listener para mudanças de tamanho
+    // Add listener for size changes
     window.addEventListener("resize", checkSize);
     
-    // Limpar listener
+    // Clean up listener
     return () => window.removeEventListener("resize", checkSize);
   }, []);
 
@@ -35,9 +37,17 @@ export function Sidebar() {
     setIsOpen(!isOpen);
   };
 
+  const handleNewTask = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+  };
+
   return (
     <>
-      {/* Botão de toggle para mobile */}
+      {/* Toggle button for mobile */}
       <Button 
         variant="outline" 
         size="icon" 
@@ -100,20 +110,30 @@ export function Sidebar() {
         </nav>
         
         <div className="border-t p-4">
-          <Button className="w-full bg-burgundy text-light-gray hover:bg-burgundy/90">
+          <Button 
+            className="w-full bg-burgundy text-light-gray hover:bg-burgundy/90"
+            onClick={handleNewTask}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nova Tarefa
           </Button>
         </div>
       </div>
       
-      {/* Overlay para fechar o sidebar em mobile */}
+      {/* Overlay to close sidebar on mobile */}
       {isMobile && isOpen && (
         <div 
           className="fixed inset-0 z-30 bg-black/50 md:hidden"
           onClick={toggleSidebar}
         />
       )}
+
+      {/* Task form modal */}
+      <TaskForm 
+        isOpen={isFormOpen} 
+        onClose={handleCloseForm} 
+        task={undefined}
+      />
     </>
   );
 }
