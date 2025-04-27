@@ -2,12 +2,27 @@
 import { TaskList } from "@/components/tasks/TaskList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useStore from "@/store/useStore";
+import { useMemo } from "react";
+import { Task } from "@/types";
 
 export function Tasks() {
-  const allTasks = useStore((state) => state.tasks);
-  const pendingTasks = useStore((state) => state.getTasksByStatus("pending"));
-  const completedTasks = useStore((state) => state.getTasksByStatus("completed"));
-  const rescheduledTasks = useStore((state) => state.getTasksByStatus("rescheduled"));
+  // Get all tasks once
+  const tasks = useStore((state) => state.tasks);
+  
+  // Memoize filtered tasks
+  const allTasks = useMemo(() => tasks, [tasks]);
+  
+  const pendingTasks = useMemo(() => 
+    tasks.filter(task => task.status === "pending"),
+  [tasks]);
+  
+  const completedTasks = useMemo(() => 
+    tasks.filter(task => task.status === "completed"),
+  [tasks]);
+  
+  const rescheduledTasks = useMemo(() => 
+    tasks.filter(task => task.status === "rescheduled"),
+  [tasks]);
   
   return (
     <div className="space-y-6">

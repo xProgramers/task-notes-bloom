@@ -6,11 +6,14 @@ import useStore from "@/store/useStore";
 import { useMemo } from "react";
 
 export function Dashboard() {
-  // Use selector with useMemo to prevent recreation of the filter function on each render
-  const todayTasks = useStore((state) => {
+  // Get all tasks first
+  const tasks = useStore(state => state.tasks);
+  
+  // Then filter with useMemo
+  const todayTasks = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
-    return state.tasks.filter(task => task.dueDate === today);
-  });
+    return tasks.filter(task => task.dueDate === today);
+  }, [tasks]);
   
   return (
     <div className="space-y-10">
