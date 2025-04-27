@@ -1,13 +1,31 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { Layout } from "@/components/layout/Layout";
+import { Dashboard } from "@/components/screens/Dashboard";
+import { Tasks } from "@/components/screens/Tasks";
+import { Notes } from "@/components/screens/Notes";
+import useStore from "@/store/useStore";
 
 const Index = () => {
+  const activeView = useStore((state) => state.activeView);
+  
+  // Renderiza o componente correto baseado na view ativa
+  const renderActiveView = () => {
+    switch (activeView) {
+      case "dashboard":
+        return <Dashboard />;
+      case "tasks":
+        return <Tasks />;
+      case "notes":
+        return <Notes />;
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout>
+      {renderActiveView()}
+    </Layout>
   );
 };
 
