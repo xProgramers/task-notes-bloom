@@ -1,7 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar, Note, LayoutDashboard, Plus } from "lucide-react";
+import { Calendar, BookOpen, LayoutDashboard, Plus } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useEffect, useState } from "react";
 
@@ -94,7 +94,7 @@ export function Sidebar() {
             )}
             onClick={() => setActiveView("notes")}
           >
-            <Note className="mr-2 h-4 w-4" />
+            <BookOpen className="mr-2 h-4 w-4" />
             Notas
           </Button>
         </nav>
