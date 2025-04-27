@@ -4,10 +4,18 @@ import { StatCard } from "@/components/ui/stat-card";
 import { ProgressCircle } from "@/components/ui/progress-circle";
 import useStore from "@/store/useStore";
 import { CalendarIcon, CheckIcon, ClockIcon, ListIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export function DashboardSummary() {
-  const stats = useStore((state) => state.getTaskStats());
-  const todayTasks = useStore((state) => state.getTasksDueToday());
+  // Use useMemo to cache the stats calculation
+  const stats = useMemo(() => {
+    return useStore.getState().getTaskStats();
+  }, []);
+  
+  // Use useMemo to cache the today's tasks
+  const todayTasksCount = useMemo(() => {
+    return useStore.getState().getTasksDueToday().length;
+  }, []);
   
   return (
     <div className="grid gap-6">
@@ -31,7 +39,7 @@ export function DashboardSummary() {
         />
         <StatCard
           title="Para Hoje"
-          value={todayTasks.length}
+          value={todayTasksCount}
           icon={<CalendarIcon className="h-4 w-4 text-muted-foreground" />}
         />
       </div>
