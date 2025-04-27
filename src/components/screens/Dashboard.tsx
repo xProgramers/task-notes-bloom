@@ -3,9 +3,10 @@ import { DashboardSummary } from "@/components/dashboard/DashboardSummary";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
 import useStore from "@/store/useStore";
+import { useMemo } from "react";
 
 export function Dashboard() {
-  // Use the selector pattern to subscribe to tasks due today
+  // Use selector with useMemo to prevent recreation of the filter function on each render
   const todayTasks = useStore((state) => {
     const today = new Date().toISOString().split('T')[0];
     return state.tasks.filter(task => task.dueDate === today);

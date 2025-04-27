@@ -4,11 +4,33 @@ import { StatCard } from "@/components/ui/stat-card";
 import { ProgressCircle } from "@/components/ui/progress-circle";
 import useStore from "@/store/useStore";
 import { CalendarIcon, CheckIcon, ClockIcon, ListIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export function DashboardSummary() {
-  // Use the selector pattern to subscribe to specific state
-  const stats = useStore((state) => state.getTaskStats());
-  const todayTasksCount = useStore((state) => state.getTasksDueToday().length);
+  // Use separate primitive selectors instead of derived data to avoid unnecessary re-renders
+  const tasks = useStore(state => state.tasks);
+  
+  // Memoize the computation of derived state
+  const stats = useMemo(() => {
+    const completed = tasks.filter(task => task.status === 'completed').length;
+    const pending = tasks.filter(task => task.status === 'pending').length;
+    const rescheduled = tasks.filter(task => task.status === 'rescheduled').length;
+    const total = tasks.length;
+    
+    return {
+      completed,
+      pending,
+      rescheduled,
+      total,
+      completionRate: total > 0 ? (completed / total) * 100 : 0,
+    };
+  }, [tasks]);
+  
+  // Calculate todayTasksCount separately
+  const todayTasksCount = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return tasks.filter(task => task.dueDate === today).length;
+  }, [tasks]);
   
   return (
     <div className="grid gap-6">
