@@ -6,10 +6,14 @@ import useStore from "@/store/useStore";
 import { useMemo } from "react";
 
 export function Dashboard() {
-  // Use useMemo to cache the result of getTasksDueToday
-  const todayTasks = useMemo(() => {
-    return useStore.getState().getTasksDueToday();
-  }, []);
+  // Use the selector pattern with useStore to get tasks due today
+  const todayTasks = useStore((state) => {
+    // Here we use the selector function to get only what we need
+    return state.tasks.filter((task) => {
+      const today = new Date().toISOString().split('T')[0];
+      return task.dueDate === today;
+    });
+  });
   
   return (
     <div className="space-y-10">
