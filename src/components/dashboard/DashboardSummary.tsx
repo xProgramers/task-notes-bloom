@@ -68,7 +68,9 @@ export function DashboardSummary() {
             <ProgressCircle
               value={stats.completionRate}
               size={140}
-              color="var(--burgundy)"
+              color="#7C293A"
+              strokeWidth={12}
+              className="text-burgundy/20"
             />
           </CardContent>
         </Card>
