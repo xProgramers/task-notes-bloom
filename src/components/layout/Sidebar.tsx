@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar, BookOpen, LayoutDashboard, Plus } from "lucide-react";
 import useStore from "@/store/useStore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TaskForm } from "../tasks/TaskForm";
 
 export function Sidebar() {
@@ -13,16 +13,29 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  // Use useCallback to memoize these functions
+  const checkSize = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+    if (window.innerWidth < 768) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
+  const handleNewTask = useCallback(() => {
+    setIsFormOpen(true);
+  }, []);
+
+  const handleCloseForm = useCallback(() => {
+    setIsFormOpen(false);
+  }, []);
+
   useEffect(() => {
-    const checkSize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setIsOpen(false);
-      } else {
-        setIsOpen(true);
-      }
-    };
-    
     // Check on initialization
     checkSize();
     
@@ -31,19 +44,7 @@ export function Sidebar() {
     
     // Clean up listener
     return () => window.removeEventListener("resize", checkSize);
-  }, []);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleNewTask = () => {
-    setIsFormOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-  };
+  }, [checkSize]);
 
   return (
     <>
