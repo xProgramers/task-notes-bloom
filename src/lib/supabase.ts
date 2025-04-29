@@ -2,20 +2,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
 
-// Get environment variables or use placeholder values for development
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-// Check if we have the required values
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    "Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment."
-  );
-}
+// We're using the values from the Supabase integration directly instead of environment variables
+const supabaseUrl = "https://pvhtwpigjjpagogvzgpd.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2aHR3cGlnampwYWdvZ3Z6Z3BkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5NjM0MzcsImV4cCI6MjA2MTUzOTQzN30.RkMaUBAddssTK5JSB5o1UMMX8UqiXBaDSAzRF1ChYGI";
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
-// Use this function to check if Supabase is properly configured
+// This function is no longer needed as we have hardcoded values
 export function isSupabaseConfigured(): boolean {
-  return Boolean(supabaseUrl && supabaseAnonKey);
+  return true; // Always return true since we're using hardcoded values
 }
