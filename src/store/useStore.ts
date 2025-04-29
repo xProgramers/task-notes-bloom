@@ -1,24 +1,27 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, Note, TaskStats } from '../types';
+import { supabase } from '@/lib/supabase';
 
 interface StoreState {
   tasks: Task[];
   notes: Note[];
   activeView: 'dashboard' | 'tasks' | 'notes';
+  isLoading: boolean;
   
   // Actions para tarefas
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateTask: (id: string, task: Partial<Task>) => void;
-  deleteTask: (id: string) => void;
-  toggleTaskCompletion: (id: string) => void;
-  rescheduleTask: (id: string, dueDate: string, dueTime: string) => void;
+  fetchTasks: () => Promise<void>;
+  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateTask: (id: string, task: Partial<Task>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  toggleTaskCompletion: (id: string) => Promise<void>;
+  rescheduleTask: (id: string, dueDate: string, dueTime: string) => Promise<void>;
   
   // Actions para notas
-  addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateNote: (id: string, note: Partial<Note>) => void;
-  deleteNote: (id: string) => void;
+  fetchNotes: () => Promise<void>;
+  addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateNote: (id: string, note: Partial<Note>) => Promise<void>;
+  deleteNote: (id: string) => Promise<void>;
   
   // Actions para navegação
   setActiveView: (view: 'dashboard' | 'tasks' | 'notes') => void;
@@ -37,106 +40,357 @@ const useStore = create<StoreState>()(
       tasks: [],
       notes: [],
       activeView: 'dashboard',
+      isLoading: false,
       
-      // Implementações das actions para tarefas
-      addTask: (task) => {
-        const now = new Date().toISOString();
-        const newTask: Task = {
-          ...task,
-          id: crypto.randomUUID(),
-          createdAt: now,
-          updatedAt: now,
-        };
+      // Implementações das actions para tarefas com Supabase
+      fetchTasks: async () => {
+        try {
+          set({ isLoading: true });
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data, error } = await supabase
+            .from('tasks')
+            .select('*')
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          // Converte os dados do Supabase para o formato da aplicação
+          const tasks: Task[] = data.map(item => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            dueDate: item.due_date,
+            dueTime: item.due_time,
+            status: item.status as 'pending' | 'completed' | 'rescheduled',
+            completed: item.completed,
+            tags: item.tags,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+          }));
+          
+          set({ tasks });
+        } catch (error) {
+          console.error('Erro ao buscar tarefas:', error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+      
+      addTask: async (task) => {
+        try {
+          const now = new Date().toISOString();
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data, error } = await supabase
+            .from('tasks')
+            .insert([{
+              title: task.title,
+              description: task.description,
+              due_date: task.dueDate,
+              due_time: task.dueTime,
+              status: task.status,
+              completed: task.completed || false,
+              tags: task.tags,
+              created_at: now,
+              updated_at: now,
+              user_id: user.id,
+            }])
+            .select();
+            
+          if (error) throw error;
+          
+          if (data && data[0]) {
+            const newTask: Task = {
+              id: data[0].id,
+              title: data[0].title,
+              description: data[0].description,
+              dueDate: data[0].due_date,
+              dueTime: data[0].due_time,
+              status: data[0].status as 'pending' | 'completed' | 'rescheduled',
+              completed: data[0].completed,
+              tags: data[0].tags,
+              createdAt: data[0].created_at,
+              updatedAt: data[0].updated_at,
+            };
+            
+            set((state) => ({
+              tasks: [...state.tasks, newTask],
+            }));
+          }
+        } catch (error) {
+          console.error('Erro ao adicionar tarefa:', error);
+        }
+      },
+      
+      updateTask: async (id, updatedTask) => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { error } = await supabase
+            .from('tasks')
+            .update({
+              title: updatedTask.title,
+              description: updatedTask.description,
+              due_date: updatedTask.dueDate,
+              due_time: updatedTask.dueTime,
+              status: updatedTask.status,
+              completed: updatedTask.completed,
+              tags: updatedTask.tags,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            tasks: state.tasks.map((task) => 
+              task.id === id 
+                ? { ...task, ...updatedTask, updatedAt: new Date().toISOString() } 
+                : task
+            ),
+          }));
+        } catch (error) {
+          console.error('Erro ao atualizar tarefa:', error);
+        }
+      },
+      
+      deleteTask: async (id) => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { error } = await supabase
+            .from('tasks')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            tasks: state.tasks.filter((task) => task.id !== id),
+          }));
+        } catch (error) {
+          console.error('Erro ao excluir tarefa:', error);
+        }
+      },
+      
+      toggleTaskCompletion: async (id) => {
+        const task = get().tasks.find(t => t.id === id);
+        if (!task) return;
         
-        set((state) => ({
-          tasks: [...state.tasks, newTask],
-        }));
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const newStatus = !task.completed ? 'completed' : 'pending';
+          
+          const { error } = await supabase
+            .from('tasks')
+            .update({
+              completed: !task.completed,
+              status: newStatus,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            tasks: state.tasks.map((task) => 
+              task.id === id 
+                ? { 
+                    ...task, 
+                    completed: !task.completed, 
+                    status: !task.completed ? 'completed' : 'pending',
+                    updatedAt: new Date().toISOString() 
+                  } 
+                : task
+            ),
+          }));
+        } catch (error) {
+          console.error('Erro ao alterar status da tarefa:', error);
+        }
       },
       
-      updateTask: (id, updatedTask) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) => 
-            task.id === id 
-              ? { ...task, ...updatedTask, updatedAt: new Date().toISOString() } 
-              : task
-          ),
-        }));
+      rescheduleTask: async (id, dueDate, dueTime) => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { error } = await supabase
+            .from('tasks')
+            .update({
+              due_date: dueDate,
+              due_time: dueTime,
+              status: 'rescheduled',
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            tasks: state.tasks.map((task) => 
+              task.id === id 
+                ? { 
+                    ...task, 
+                    dueDate,
+                    dueTime,
+                    status: 'rescheduled',
+                    updatedAt: new Date().toISOString() 
+                  } 
+                : task
+            ),
+          }));
+        } catch (error) {
+          console.error('Erro ao reagendar tarefa:', error);
+        }
       },
       
-      deleteTask: (id) => {
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        }));
+      // Implementações das actions para notas com Supabase
+      fetchNotes: async () => {
+        try {
+          set({ isLoading: true });
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data, error } = await supabase
+            .from('notes')
+            .select('*')
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          // Converte os dados do Supabase para o formato da aplicação
+          const notes: Note[] = data.map(item => ({
+            id: item.id,
+            title: item.title,
+            content: item.content,
+            category: item.category,
+            tags: item.tags,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+          }));
+          
+          set({ notes });
+        } catch (error) {
+          console.error('Erro ao buscar notas:', error);
+        } finally {
+          set({ isLoading: false });
+        }
       },
       
-      toggleTaskCompletion: (id) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) => 
-            task.id === id 
-              ? { 
-                  ...task, 
-                  completed: !task.completed, 
-                  status: !task.completed ? 'completed' : 'pending',
-                  updatedAt: new Date().toISOString() 
-                } 
-              : task
-          ),
-        }));
+      addNote: async (note) => {
+        try {
+          const now = new Date().toISOString();
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { data, error } = await supabase
+            .from('notes')
+            .insert([{
+              title: note.title,
+              content: note.content,
+              category: note.category,
+              tags: note.tags,
+              created_at: now,
+              updated_at: now,
+              user_id: user.id,
+            }])
+            .select();
+            
+          if (error) throw error;
+          
+          if (data && data[0]) {
+            const newNote: Note = {
+              id: data[0].id,
+              title: data[0].title,
+              content: data[0].content,
+              category: data[0].category,
+              tags: data[0].tags,
+              createdAt: data[0].created_at,
+              updatedAt: data[0].updated_at,
+            };
+            
+            set((state) => ({
+              notes: [...state.notes, newNote],
+            }));
+          }
+        } catch (error) {
+          console.error('Erro ao adicionar nota:', error);
+        }
       },
       
-      rescheduleTask: (id, dueDate, dueTime) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) => 
-            task.id === id 
-              ? { 
-                  ...task, 
-                  dueDate,
-                  dueTime,
-                  status: 'rescheduled',
-                  updatedAt: new Date().toISOString() 
-                } 
-              : task
-          ),
-        }));
+      updateNote: async (id, updatedNote) => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { error } = await supabase
+            .from('notes')
+            .update({
+              title: updatedNote.title,
+              content: updatedNote.content,
+              category: updatedNote.category,
+              tags: updatedNote.tags,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            notes: state.notes.map((note) => 
+              note.id === id 
+                ? { ...note, ...updatedNote, updatedAt: new Date().toISOString() } 
+                : note
+            ),
+          }));
+        } catch (error) {
+          console.error('Erro ao atualizar nota:', error);
+        }
       },
       
-      // Implementações das actions para notas
-      addNote: (note) => {
-        const now = new Date().toISOString();
-        const newNote: Note = {
-          ...note,
-          id: crypto.randomUUID(),
-          createdAt: now,
-          updatedAt: now,
-        };
-        
-        set((state) => ({
-          notes: [...state.notes, newNote],
-        }));
+      deleteNote: async (id) => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          
+          const { error } = await supabase
+            .from('notes')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+            
+          if (error) throw error;
+          
+          set((state) => ({
+            notes: state.notes.filter((note) => note.id !== id),
+          }));
+        } catch (error) {
+          console.error('Erro ao excluir nota:', error);
+        }
       },
       
-      updateNote: (id, updatedNote) => {
-        set((state) => ({
-          notes: state.notes.map((note) => 
-            note.id === id 
-              ? { ...note, ...updatedNote, updatedAt: new Date().toISOString() } 
-              : note
-          ),
-        }));
-      },
-      
-      deleteNote: (id) => {
-        set((state) => ({
-          notes: state.notes.filter((note) => note.id !== id),
-        }));
-      },
-      
-      // Implementações das actions para navegação
+      // Keep existing navigation action
       setActiveView: (view) => {
         set({ activeView: view });
       },
       
-      // Implementações dos getters
+      // Keep existing getters
       getTaskStats: () => {
         const { tasks } = get();
         const completed = tasks.filter((task) => task.status === 'completed').length;
@@ -183,6 +437,10 @@ const useStore = create<StoreState>()(
     }),
     {
       name: 'bloom-storage',
+      // Não persiste tarefas e notas localmente, pois serão buscadas do Supabase
+      partialize: (state) => ({ 
+        activeView: state.activeView
+      }),
     }
   )
 );

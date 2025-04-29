@@ -5,15 +5,16 @@ import { useState } from "react";
 import { TaskForm } from "./TaskForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
   title?: string;
   emptyMessage?: string;
+  isLoading?: boolean;
 }
 
-export function TaskList({ tasks, title = "Tarefas", emptyMessage = "Nenhuma tarefa encontrada." }: TaskListProps) {
+export function TaskList({ tasks, title = "Tarefas", emptyMessage = "Nenhuma tarefa encontrada.", isLoading = false }: TaskListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [taskToEdit, setTaskToEdit] = useState<Task | undefined>(undefined);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -62,7 +63,12 @@ export function TaskList({ tasks, title = "Tarefas", emptyMessage = "Nenhuma tar
         />
       </div>
       
-      {filteredTasks.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center p-8 bg-card rounded-lg">
+          <Loader2 className="h-8 w-8 animate-spin text-burgundy" />
+          <p className="mt-4 text-muted-foreground">Carregando tarefas...</p>
+        </div>
+      ) : filteredTasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 bg-card rounded-lg">
           <p className="text-muted-foreground">{emptyMessage}</p>
           <Button 

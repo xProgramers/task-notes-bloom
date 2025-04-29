@@ -2,12 +2,19 @@
 import { TaskList } from "@/components/tasks/TaskList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useStore from "@/store/useStore";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Task } from "@/types";
 
 export function Tasks() {
-  // Get all tasks once
+  // Get all tasks and load function
   const tasks = useStore((state) => state.tasks);
+  const fetchTasks = useStore((state) => state.fetchTasks);
+  const isLoading = useStore((state) => state.isLoading);
+  
+  // Busca as tarefas quando o componente é montado
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
   
   // Memoize filtered tasks
   const allTasks = useMemo(() => tasks, [tasks]);
@@ -40,6 +47,7 @@ export function Tasks() {
             tasks={allTasks} 
             title="Todas as Tarefas" 
             emptyMessage="Nenhuma tarefa encontrada."
+            isLoading={isLoading}
           />
         </TabsContent>
         <TabsContent value="pending" className="mt-6">
@@ -47,6 +55,7 @@ export function Tasks() {
             tasks={pendingTasks} 
             title="Tarefas Pendentes" 
             emptyMessage="Nenhuma tarefa pendente."
+            isLoading={isLoading}
           />
         </TabsContent>
         <TabsContent value="completed" className="mt-6">
@@ -54,6 +63,7 @@ export function Tasks() {
             tasks={completedTasks} 
             title="Tarefas Concluídas" 
             emptyMessage="Nenhuma tarefa concluída."
+            isLoading={isLoading}
           />
         </TabsContent>
         <TabsContent value="rescheduled" className="mt-6">
@@ -61,6 +71,7 @@ export function Tasks() {
             tasks={rescheduledTasks} 
             title="Tarefas Reagendadas" 
             emptyMessage="Nenhuma tarefa reagendada."
+            isLoading={isLoading}
           />
         </TabsContent>
       </Tabs>

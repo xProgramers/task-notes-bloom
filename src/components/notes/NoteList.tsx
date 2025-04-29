@@ -5,15 +5,16 @@ import { useState } from "react";
 import { NoteForm } from "./NoteForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 
 interface NoteListProps {
   notes: Note[];
   title?: string;
   emptyMessage?: string;
+  isLoading?: boolean;
 }
 
-export function NoteList({ notes, title = "Notas", emptyMessage = "Nenhuma nota encontrada." }: NoteListProps) {
+export function NoteList({ notes, title = "Notas", emptyMessage = "Nenhuma nota encontrada.", isLoading = false }: NoteListProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [noteToEdit, setNoteToEdit] = useState<Note | undefined>(undefined);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -63,7 +64,12 @@ export function NoteList({ notes, title = "Notas", emptyMessage = "Nenhuma nota 
         />
       </div>
       
-      {filteredNotes.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center p-8 bg-card rounded-lg">
+          <Loader2 className="h-8 w-8 animate-spin text-burgundy" />
+          <p className="mt-4 text-muted-foreground">Carregando notas...</p>
+        </div>
+      ) : filteredNotes.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 bg-card rounded-lg">
           <p className="text-muted-foreground">{emptyMessage}</p>
           <Button 
