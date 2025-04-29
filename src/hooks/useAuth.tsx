@@ -1,7 +1,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useToast } from "./use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  supabaseConfigured: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,10 +19,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [supabaseConfigured, setSupabaseConfigured] = useState(isSupabaseConfigured());
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if Supabase is configured
+    if (!supabaseConfigured) {
+      setLoading(false);
+      toast({
+        title: "Supabase não está configurado",
+        description: "Por favor, configure as variáveis de ambiente do Supabase.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Inicialmente, tentamos obter a sessão atual
     const getInitialSession = async () => {
       try {
@@ -49,9 +62,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [toast]);
 
   const signOut = async () => {
+    if (!supabaseConfigured) {
+      toast({
+        title: "Supabase não está configurado",
+        description: "Não é possível fazer logout.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       await supabase.auth.signOut();
       toast({
@@ -73,6 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     signOut,
+    supabaseConfigured,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
