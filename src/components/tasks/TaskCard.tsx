@@ -86,19 +86,19 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="px-4 py-2 flex justify-between items-center text-xs text-muted-foreground border-t">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center">
+      <CardFooter className="px-4 py-3 flex flex-col gap-2 items-start text-xs border-t">
+        <div className="flex w-full justify-between">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Calendar className="h-3 w-3 mr-1" />
             <span>{task.dueDate}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Clock className="h-3 w-3 mr-1" />
             <span>{task.dueTime}</span>
           </div>
         </div>
-        <div>
-          {formatDistanceToNow(new Date(task.createdAt), { 
+        <div className="text-xs text-muted-foreground italic">
+          Criado {formatDistanceToNow(new Date(task.createdAt), { 
             addSuffix: true,
             locale: ptBR 
           })}

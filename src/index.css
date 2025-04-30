@@ -153,6 +153,21 @@
   .react-calendar {
     @apply pointer-events-auto !important;
   }
+  
+  /* Melhor legibilidade para o modo claro */
+  :root:not(.dark) {
+    --foreground: 222.2 84% 4.9%;
+    --card-foreground: 222.2 84% 4.9%;
+    --muted-foreground: 222.2 47.4% 11.2%;
+  }
+  
+  :root:not(.dark) body {
+    @apply text-gray-900;
+  }
+  
+  :root:not(.dark) .text-muted-foreground {
+    @apply text-gray-700;
+  }
 }
 
 @keyframes fadeIn {

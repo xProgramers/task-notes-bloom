@@ -28,7 +28,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <div className="fixed top-4 right-6 flex gap-2">
+    <div className="fixed top-4 right-6 flex gap-2 z-50">
       {/* Botão de notificação à esquerda do tema */}
       {user && !isLoginPage && (
         <TaskNotification />

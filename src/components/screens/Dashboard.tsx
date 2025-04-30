@@ -32,7 +32,6 @@ export function Dashboard() {
       <div className="space-y-10 fade-in">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-burgundy">Dashboard</h1>
-          {/* Removemos o botão de notificação daqui, ele será mostrado no ThemeToggle */}
         </div>
         
         <EnhancedDashboardSummary />
