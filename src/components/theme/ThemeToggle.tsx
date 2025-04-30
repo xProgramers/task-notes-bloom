@@ -32,7 +32,7 @@ export function ThemeToggle() {
         variant="ghost"
         size="icon"
         onClick={toggleTheme}
-        className="theme-toggle-btn"
+        className="theme-toggle-btn flex items-center justify-center"
         title={theme === "light" ? "Modo escuro" : "Modo claro"}
       >
         {theme === "light" ? (
@@ -48,7 +48,7 @@ export function ThemeToggle() {
           size="icon"
           onClick={signOut}
           title="Sair"
-          className="hover:bg-burgundy/10"
+          className="hover:bg-burgundy/10 flex items-center justify-center"
         >
           <LogOut className="h-5 w-5" />
         </Button>

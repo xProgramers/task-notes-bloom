@@ -138,6 +138,21 @@
   .theme-transitioning * {
     transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease !important;
   }
+  
+  /* Fix for clickable areas */
+  .theme-toggle-btn {
+    @apply flex items-center justify-center cursor-pointer;
+  }
+  
+  /* Make popover content clickable */
+  .radix-popover-content {
+    @apply pointer-events-auto !important;
+  }
+  
+  /* Ensures calendar is clickable */
+  .react-calendar {
+    @apply pointer-events-auto !important;
+  }
 }
 
 @keyframes fadeIn {

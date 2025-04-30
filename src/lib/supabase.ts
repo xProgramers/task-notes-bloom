@@ -2,7 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
 
-// We're using the values from the Supabase integration directly instead of environment variables
+// Using hardcoded values from the Supabase integration
 const supabaseUrl = "https://pvhtwpigjjpagogvzgpd.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2aHR3cGlnampwYWdvZ3Z6Z3BkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5NjM0MzcsImV4cCI6MjA2MTUzOTQzN30.RkMaUBAddssTK5JSB5o1UMMX8UqiXBaDSAzRF1ChYGI";
 

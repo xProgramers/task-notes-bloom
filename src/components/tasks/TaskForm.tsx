@@ -16,6 +16,7 @@ import { Task } from "@/types";
 import { useState, useEffect } from "react";
 import useStore from "@/store/useStore";
 import { parse, format } from "date-fns";
+import { toast } from "sonner";
 
 interface TaskFormProps {
   isOpen: boolean;
@@ -64,8 +65,13 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
     }
   }, [task]);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!title.trim()) {
+      toast.error("Por favor, informe um título para a tarefa");
+      return;
+    }
     
     const formattedDate = dueDate ? format(dueDate, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd");
     const tagsList = tags
@@ -73,34 +79,41 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
     
-    if (task) {
-      // Atualizar tarefa existente
-      updateTask(task.id, {
-        title,
-        description,
-        dueDate: formattedDate,
-        dueTime,
-        tags: tagsList,
-      });
-    } else {
-      // Criar nova tarefa
-      addTask({
-        title,
-        description,
-        dueDate: formattedDate,
-        dueTime,
-        tags: tagsList,
-        status: "pending",
-        completed: false,
-      });
+    try {
+      if (task) {
+        // Atualizar tarefa existente
+        await updateTask(task.id, {
+          title,
+          description,
+          dueDate: formattedDate,
+          dueTime,
+          tags: tagsList,
+        });
+        toast.success("Tarefa atualizada com sucesso!");
+      } else {
+        // Criar nova tarefa
+        await addTask({
+          title,
+          description,
+          dueDate: formattedDate,
+          dueTime,
+          tags: tagsList,
+          status: "pending",
+          completed: false,
+        });
+        toast.success("Tarefa criada com sucesso!");
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error("Erro ao salvar tarefa:", error);
+      toast.error("Ocorreu um erro ao salvar a tarefa. Tente novamente.");
     }
-    
-    onClose();
   };
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] pointer-events-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>

@@ -48,27 +48,28 @@ export function Welcome() {
   useEffect(() => {
     const welcomeSeen = localStorage.getItem("bloomWelcomeSeen");
     setHasSeenWelcome(!!welcomeSeen);
-    
-    if (!welcomeSeen) {
-      localStorage.setItem("bloomWelcomeSeen", "true");
-    }
   }, []);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Último passo, vamos para o dashboard
+      // Último passo, vamos para o dashboard e salvar que já viu
+      localStorage.setItem("bloomWelcomeSeen", "true");
       setActiveView("dashboard");
+      setHasSeenWelcome(true); // Set state to hide welcome component
     }
   };
 
   const skipWelcome = () => {
+    // Salvar que já viu o welcome e ir para o dashboard
+    localStorage.setItem("bloomWelcomeSeen", "true");
     setActiveView("dashboard");
+    setHasSeenWelcome(true); // Set state to hide welcome component
   };
   
   if (hasSeenWelcome) {
-    // Se já viu o welcome, vai direto para o dashboard
+    // Se já viu o welcome, não mostra nada
     return null;
   }
 
