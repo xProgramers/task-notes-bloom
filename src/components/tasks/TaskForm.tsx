@@ -33,6 +33,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
   const [dueTime, setDueTime] = useState("09:00");
   const [tags, setTags] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Reseta o form quando o modal fecha
   useEffect(() => {
@@ -44,8 +45,9 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
         setDueTime("09:00");
         setTags("");
       }
+      setIsSubmitting(false);
     }
-  }, [isOpen]);
+  }, [isOpen, task]);
   
   // Preenche o form quando existe uma tarefa para editar
   useEffect(() => {
@@ -72,6 +74,8 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
       toast.error("Por favor, informe um título para a tarefa");
       return;
     }
+    
+    setIsSubmitting(true);
     
     const formattedDate = dueDate ? format(dueDate, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd");
     const tagsList = tags
@@ -108,12 +112,14 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
     } catch (error) {
       console.error("Erro ao salvar tarefa:", error);
       toast.error("Ocorreu um erro ao salvar a tarefa. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] pointer-events-auto">
+      <DialogContent className="sm:max-w-[425px] z-50">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -173,14 +179,18 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
               type="button" 
               variant="outline" 
               onClick={onClose}
+              disabled={isSubmitting}
             >
               Cancelar
             </Button>
             <Button 
               type="submit"
               className="bg-burgundy text-light-gray"
+              disabled={isSubmitting}
             >
-              {task ? "Atualizar" : "Criar"}
+              {isSubmitting 
+                ? "Salvando..." 
+                : task ? "Atualizar" : "Criar"}
             </Button>
           </DialogFooter>
         </form>
