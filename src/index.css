@@ -76,6 +76,17 @@
     @apply bg-deep-black text-light-gray;
   }
 
+  /* Transição suave entre temas */
+  body, 
+  .bg-background, 
+  .text-foreground,
+  .bg-card,
+  .border-border,
+  .bg-primary,
+  .bg-secondary {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+  }
+
   /* Classes utilitárias adicionais */
   .btn-primary {
     @apply bg-burgundy text-light-gray hover:bg-burgundy/90 transition-colors;
@@ -87,5 +98,82 @@
 
   .animate-in {
     @apply animate-slide-in;
+  }
+
+  /* Novas classes para tags coloridas */
+  .tag-red {
+    @apply bg-red-500/20 text-red-700 dark:text-red-400;
+  }
+  .tag-blue {
+    @apply bg-blue-500/20 text-blue-700 dark:text-blue-400;
+  }
+  .tag-green {
+    @apply bg-green-500/20 text-green-700 dark:text-green-400;
+  }
+  .tag-purple {
+    @apply bg-purple-500/20 text-purple-700 dark:text-purple-400;
+  }
+  .tag-amber {
+    @apply bg-amber-500/20 text-amber-700 dark:text-amber-400;
+  }
+
+  /* Novas animações */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+
+  .slide-up {
+    animation: slideUp 0.3s ease-out forwards;
+  }
+
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  .bounce {
+    animation: bounce 1s infinite;
+  }
+
+  /* Classe para tema em transição */
+  .theme-transitioning * {
+    transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease !important;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
   }
 }

@@ -16,17 +16,29 @@ export function ThemeToggle() {
     root.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    // Adiciona uma classe temporária para a animação de transição
+    document.documentElement.classList.add('theme-transitioning');
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 800);
+  };
+
   return (
     <div className="fixed top-4 right-6 flex gap-2">
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        onClick={toggleTheme}
+        className="theme-toggle-btn"
+        title={theme === "light" ? "Modo escuro" : "Modo claro"}
       >
         {theme === "light" ? (
-          <Moon className="h-5 w-5" />
+          <Moon className="h-5 w-5 transition-transform duration-300 hover:rotate-45" />
         ) : (
-          <Sun className="h-5 w-5" />
+          <Sun className="h-5 w-5 transition-transform duration-300 hover:rotate-45" />
         )}
       </Button>
       
@@ -36,6 +48,7 @@ export function ThemeToggle() {
           size="icon"
           onClick={signOut}
           title="Sair"
+          className="hover:bg-burgundy/10"
         >
           <LogOut className="h-5 w-5" />
         </Button>

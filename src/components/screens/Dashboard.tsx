@@ -1,13 +1,23 @@
 
-import { DashboardSummary } from "@/components/dashboard/DashboardSummary";
+import { EnhancedDashboardSummary } from "@/components/dashboard/EnhancedDashboardSummary";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
 import useStore from "@/store/useStore";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
+import { Welcome } from "./Welcome";
+import { TaskNotification } from "@/components/notifications/TaskNotification";
 
 export function Dashboard() {
   // Get all tasks first
   const tasks = useStore(state => state.tasks);
+  const fetchTasks = useStore(state => state.fetchTasks);
+  const fetchNotes = useStore(state => state.fetchNotes);
+  
+  // Fetch data when component mounts
+  useEffect(() => {
+    fetchTasks();
+    fetchNotes();
+  }, [fetchTasks, fetchNotes]);
   
   // Then filter with useMemo
   const todayTasks = useMemo(() => {
@@ -16,18 +26,25 @@ export function Dashboard() {
   }, [tasks]);
   
   return (
-    <div className="space-y-10">
-      <h1 className="text-3xl font-bold text-burgundy">Dashboard</h1>
+    <>
+      <Welcome />
       
-      <DashboardSummary />
-      
-      <QuickActions />
-      
-      <TaskList
-        tasks={todayTasks}
-        title="Tarefas para Hoje"
-        emptyMessage="Nenhuma tarefa para hoje."
-      />
-    </div>
+      <div className="space-y-10 fade-in">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-burgundy">Dashboard</h1>
+          <TaskNotification />
+        </div>
+        
+        <EnhancedDashboardSummary />
+        
+        <QuickActions />
+        
+        <TaskList
+          tasks={todayTasks}
+          title="Tarefas para Hoje"
+          emptyMessage="Nenhuma tarefa para hoje."
+        />
+      </div>
+    </>
   );
 }
