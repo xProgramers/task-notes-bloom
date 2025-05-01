@@ -19,6 +19,9 @@ interface StoreState {
   toggleTaskCompletion: (id: string) => Promise<void>;
   rescheduleTask: (id: string, dueDate: string, dueTime: string) => Promise<void>;
   
+  // Helper function for recurring tasks
+  createRecurringTask: (task: Task) => Promise<void>;
+  
   // Actions para notas
   fetchNotes: () => Promise<void>;
   addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
