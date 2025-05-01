@@ -12,12 +12,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Task } from "@/types";
 import { useState, useEffect } from "react";
 import useStore from "@/store/useStore";
 import { parse, format } from "date-fns";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TaskFormProps {
   isOpen: boolean;
@@ -32,7 +38,16 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
-  const [dueTime, setDueTime] = useState("09:00");
+  
+  // Initialize dueTime with current time
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+  const [dueTime, setDueTime] = useState(getCurrentTime());
+  
   const [tags, setTags] = useState("");
   const [recurrence, setRecurrence] = useState<"none" | "daily" | "weekly" | "yearly">("none");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +59,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
         setTitle("");
         setDescription("");
         setDueDate(new Date());
-        setDueTime("09:00");
+        setDueTime(getCurrentTime());
         setTags("");
         setRecurrence("none");
       }
@@ -65,7 +80,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
           setDueDate(new Date());
         }
       }
-      setDueTime(task.dueTime || "09:00");
+      setDueTime(task.dueTime || getCurrentTime());
       setTags(task.tags.join(", "));
       setRecurrence(task.recurrence || "none");
     }
@@ -169,28 +184,20 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="recurrence">Recorrência</Label>
-              <RadioGroup 
+              <Select 
                 value={recurrence}
                 onValueChange={(value) => setRecurrence(value as "none" | "daily" | "weekly" | "yearly")}
-                className="flex flex-row space-x-4"
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="none" id="none" />
-                  <Label htmlFor="none">Nenhuma</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="daily" id="daily" />
-                  <Label htmlFor="daily">Diária</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="weekly" id="weekly" />
-                  <Label htmlFor="weekly">Semanal</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="yearly" id="yearly" />
-                  <Label htmlFor="yearly">Anual</Label>
-                </div>
-              </RadioGroup>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecionar recorrência" />
+                </SelectTrigger>
+                <SelectContent className="bg-background">
+                  <SelectItem value="none">Nenhuma</SelectItem>
+                  <SelectItem value="daily">Diária</SelectItem>
+                  <SelectItem value="weekly">Semanal</SelectItem>
+                  <SelectItem value="yearly">Anual</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="tags">Tags</Label>

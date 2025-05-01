@@ -1,7 +1,6 @@
 
 import { cn } from "@/lib/utils";
 import { Clock } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
   Select,
@@ -62,7 +61,7 @@ export function TimePicker({ value, onChange, className }: TimePickerProps) {
               <SelectTrigger className="w-full rounded-r-none border-r-0">
                 <SelectValue placeholder="Hora" />
               </SelectTrigger>
-              <SelectContent className="max-h-[200px] overflow-y-auto">
+              <SelectContent className="max-h-[200px] overflow-y-auto bg-background">
                 {hourOptions.map((hour) => (
                   <SelectItem key={hour} value={hour}>{hour}</SelectItem>
                 ))}
@@ -79,7 +78,7 @@ export function TimePicker({ value, onChange, className }: TimePickerProps) {
               <SelectTrigger className="w-full rounded-l-none border-l-0">
                 <SelectValue placeholder="Minuto" />
               </SelectTrigger>
-              <SelectContent className="max-h-[200px] overflow-y-auto">
+              <SelectContent className="max-h-[200px] overflow-y-auto bg-background">
                 {minuteOptions.map((minute) => (
                   <SelectItem key={minute} value={minute}>{minute}</SelectItem>
                 ))}
