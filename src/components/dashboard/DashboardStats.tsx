@@ -50,6 +50,13 @@ export function DashboardStats() {
     { name: "Pendentes", value: stats.pending, color: "#6E59A5" },
     { name: "Reagendadas", value: stats.rescheduled, color: "#F97316" },
   ].filter(item => item.value > 0);
+
+  // Calculate percentages for each status
+  const total = pieData.reduce((acc, item) => acc + item.value, 0);
+  const pieDataWithPercent = pieData.map(item => ({
+    ...item,
+    percent: total > 0 ? Math.round((item.value / total) * 100) : 0
+  }));
   
   return (
     <div className="grid gap-6">
@@ -100,7 +107,7 @@ export function DashboardStats() {
                 <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
-                      data={pieData}
+                      data={pieDataWithPercent}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -109,8 +116,10 @@ export function DashboardStats() {
                       dataKey="value"
                       strokeWidth={2}
                       stroke="#ffffff"
+                      label={({ name, percent }) => `${percent}%`}
+                      labelLine={false}
                     >
-                      {pieData.map((entry, index) => (
+                      {pieDataWithPercent.map((entry, index) => (
                         <Cell 
                           key={`cell-${index}`} 
                           fill={entry.color} 
@@ -126,9 +135,16 @@ export function DashboardStats() {
                         paddingTop: "20px",
                         fontSize: "12px",
                       }}
+                      formatter={(value, entry) => {
+                        const item = pieDataWithPercent.find(item => item.name === value);
+                        return `${value} (${item?.percent}%)`;
+                      }}
                     />
                     <Tooltip 
-                      formatter={(value) => [`${value} tarefas`, '']}
+                      formatter={(value, name, props) => {
+                        const item = pieDataWithPercent.find(item => item.name === name);
+                        return [`${value} tarefas (${item?.percent}%)`, name];
+                      }}
                       contentStyle={{ 
                         backgroundColor: 'var(--background)', 
                         borderColor: 'var(--border)',

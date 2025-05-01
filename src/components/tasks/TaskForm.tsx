@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Task } from "@/types";
 import { useState, useEffect } from "react";
 import useStore from "@/store/useStore";
@@ -33,6 +34,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
   const [dueTime, setDueTime] = useState("09:00");
   const [tags, setTags] = useState("");
+  const [recurrence, setRecurrence] = useState<"none" | "daily" | "weekly" | "yearly">("none");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Reseta o form quando o modal fecha
@@ -44,6 +46,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
         setDueDate(new Date());
         setDueTime("09:00");
         setTags("");
+        setRecurrence("none");
       }
       setIsSubmitting(false);
     }
@@ -64,6 +67,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
       }
       setDueTime(task.dueTime || "09:00");
       setTags(task.tags.join(", "));
+      setRecurrence(task.recurrence || "none");
     }
   }, [task]);
   
@@ -92,6 +96,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
           dueDate: formattedDate,
           dueTime,
           tags: tagsList,
+          recurrence,
         });
         toast.success("Tarefa atualizada com sucesso!");
       } else {
@@ -104,6 +109,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
           tags: tagsList,
           status: "pending",
           completed: false,
+          recurrence,
         });
         toast.success("Tarefa criada com sucesso!");
       }
@@ -160,6 +166,31 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
                 value={dueTime}
                 onChange={setDueTime}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="recurrence">Recorrência</Label>
+              <RadioGroup 
+                value={recurrence}
+                onValueChange={(value) => setRecurrence(value as "none" | "daily" | "weekly" | "yearly")}
+                className="flex flex-row space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="none" id="none" />
+                  <Label htmlFor="none">Nenhuma</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="daily" id="daily" />
+                  <Label htmlFor="daily">Diária</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="weekly" id="weekly" />
+                  <Label htmlFor="weekly">Semanal</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yearly" id="yearly" />
+                  <Label htmlFor="yearly">Anual</Label>
+                </div>
+              </RadioGroup>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="tags">Tags</Label>

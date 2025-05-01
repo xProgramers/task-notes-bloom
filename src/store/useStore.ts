@@ -1,7 +1,9 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Task, Note, TaskStats } from '../types';
+import { Task, Note, TaskStats, TaskRecurrence } from '../types';
 import { supabase } from '@/lib/supabase';
+import { addDays, addWeeks, addYears, format } from 'date-fns';
 
 interface StoreState {
   tasks: Task[];
@@ -42,6 +44,43 @@ const useStore = create<StoreState>()(
       activeView: 'dashboard',
       isLoading: false,
       
+      // Helper function for recurring tasks
+      createRecurringTask: async (task: Task) => {
+        if (!task.recurrence || task.recurrence === 'none') return;
+        
+        let newDueDate: Date;
+        
+        switch (task.recurrence) {
+          case 'daily':
+            newDueDate = addDays(new Date(task.dueDate), 1);
+            break;
+          case 'weekly':
+            newDueDate = addWeeks(new Date(task.dueDate), 1);
+            break;
+          case 'yearly':
+            newDueDate = addYears(new Date(task.dueDate), 1);
+            break;
+          default:
+            return;
+        }
+        
+        const formattedDate = format(newDueDate, 'yyyy-MM-dd');
+        
+        const newTask: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> = {
+          title: task.title,
+          description: task.description,
+          dueDate: formattedDate,
+          dueTime: task.dueTime,
+          status: 'pending',
+          completed: false,
+          tags: [...task.tags],
+          recurrence: task.recurrence as TaskRecurrence,
+        };
+        
+        // Use the existing addTask function to create the new recurring task
+        await get().addTask(newTask);
+      },
+      
       // Implementações das actions para tarefas com Supabase
       fetchTasks: async () => {
         try {
@@ -67,6 +106,7 @@ const useStore = create<StoreState>()(
             status: item.status as 'pending' | 'completed' | 'rescheduled',
             completed: item.completed,
             tags: item.tags,
+            recurrence: item.recurrence,
             createdAt: item.created_at,
             updatedAt: item.updated_at,
           }));
@@ -96,6 +136,7 @@ const useStore = create<StoreState>()(
               status: task.status,
               completed: task.completed || false,
               tags: task.tags,
+              recurrence: task.recurrence || 'none',
               created_at: now,
               updated_at: now,
               user_id: user.id,
@@ -114,6 +155,7 @@ const useStore = create<StoreState>()(
               status: data[0].status as 'pending' | 'completed' | 'rescheduled',
               completed: data[0].completed,
               tags: data[0].tags,
+              recurrence: data[0].recurrence,
               createdAt: data[0].created_at,
               updatedAt: data[0].updated_at,
             };
@@ -142,6 +184,7 @@ const useStore = create<StoreState>()(
               status: updatedTask.status,
               completed: updatedTask.completed,
               tags: updatedTask.tags,
+              recurrence: updatedTask.recurrence,
               updated_at: new Date().toISOString(),
             })
             .eq('id', id)
@@ -191,11 +234,12 @@ const useStore = create<StoreState>()(
           if (!user) return;
           
           const newStatus = !task.completed ? 'completed' : 'pending';
+          const isNowCompleted = !task.completed;
           
           const { error } = await supabase
             .from('tasks')
             .update({
-              completed: !task.completed,
+              completed: isNowCompleted,
               status: newStatus,
               updated_at: new Date().toISOString(),
             })
@@ -205,17 +249,22 @@ const useStore = create<StoreState>()(
           if (error) throw error;
           
           set((state) => ({
-            tasks: state.tasks.map((task) => 
-              task.id === id 
+            tasks: state.tasks.map((t) => 
+              t.id === id 
                 ? { 
-                    ...task, 
-                    completed: !task.completed, 
-                    status: !task.completed ? 'completed' : 'pending',
+                    ...t, 
+                    completed: isNowCompleted, 
+                    status: newStatus,
                     updatedAt: new Date().toISOString() 
                   } 
-                : task
+                : t
             ),
           }));
+          
+          // If task is now completed and has recurrence, create the next occurrence
+          if (isNowCompleted && task.recurrence && task.recurrence !== 'none') {
+            await get().createRecurringTask(task);
+          }
         } catch (error) {
           console.error('Erro ao alterar status da tarefa:', error);
         }
