@@ -8,7 +8,8 @@ import {
   Pie, 
   Cell, 
   Tooltip, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  Legend 
 } from "recharts";
 
 export function DashboardStats() {
@@ -43,11 +44,11 @@ export function DashboardStats() {
     };
   }, [tasks]);
   
-  // Data for pie chart
+  // Better contrasting colors for improved visibility
   const pieData = [
     { name: "Concluídas", value: stats.completed, color: "#7C293A" },
-    { name: "Pendentes", value: stats.pending, color: "#C4CBCA" },
-    { name: "Reagendadas", value: stats.rescheduled, color: "#D97706" },
+    { name: "Pendentes", value: stats.pending, color: "#6E59A5" },
+    { name: "Reagendadas", value: stats.rescheduled, color: "#F97316" },
   ].filter(item => item.value > 0);
   
   return (
@@ -96,7 +97,7 @@ export function DashboardStats() {
           <CardContent className="p-6">
             {stats.total > 0 ? (
               <div className="flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={pieData}
@@ -104,20 +105,42 @@ export function DashboardStats() {
                       cy="50%"
                       innerRadius={60}
                       outerRadius={80}
-                      paddingAngle={2}
+                      paddingAngle={5}
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      strokeWidth={2}
+                      stroke="#ffffff"
                     >
                       {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.color} 
+                          className="drop-shadow-lg" 
+                        />
                       ))}
                     </Pie>
+                    <Legend 
+                      layout="horizontal" 
+                      verticalAlign="bottom" 
+                      align="center" 
+                      wrapperStyle={{ 
+                        paddingTop: "20px",
+                        fontSize: "12px",
+                      }}
+                    />
                     <Tooltip 
                       formatter={(value) => [`${value} tarefas`, '']}
                       contentStyle={{ 
                         backgroundColor: 'var(--background)', 
                         borderColor: 'var(--border)',
-                        color: 'var(--foreground)' 
+                        color: 'var(--foreground)',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        padding: '10px',
+                        fontWeight: '500'
+                      }}
+                      labelStyle={{
+                        fontWeight: 'bold',
+                        marginBottom: '5px'
                       }}
                     />
                   </PieChart>
