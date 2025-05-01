@@ -2,10 +2,10 @@
 import { EnhancedDashboardSummary } from "@/components/dashboard/EnhancedDashboardSummary";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import useStore from "@/store/useStore";
 import { useMemo, useEffect } from "react";
 import { Welcome } from "./Welcome";
-import { TaskNotification } from "@/components/notifications/TaskNotification";
 
 export function Dashboard() {
   // Get all tasks first
@@ -43,6 +43,8 @@ export function Dashboard() {
           title="Tarefas para Hoje"
           emptyMessage="Nenhuma tarefa para hoje."
         />
+        
+        <DashboardStats />
       </div>
     </>
   );

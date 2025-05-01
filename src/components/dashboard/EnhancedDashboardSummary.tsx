@@ -1,20 +1,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
-import { ProgressCircle } from "@/components/ui/progress-circle";
 import useStore from "@/store/useStore";
 import { CalendarDays, CheckCircle, Clock, ListChecks, TagIcon } from "lucide-react";
 import { useMemo } from "react";
 import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer,
   PieChart, 
   Pie, 
-  Cell 
+  Cell, 
+  Tooltip, 
+  ResponsiveContainer 
 } from "recharts";
 
 export function EnhancedDashboardSummary() {
@@ -113,132 +108,6 @@ export function EnhancedDashboardSummary() {
           description={todayTasksCount > 0 ? `${Math.round((todayTasksCount / stats.total) * 100)}% das suas tarefas` : "Nenhuma tarefa para hoje"}
           className="fade-in"
         />
-      </div>
-      
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-1 card-hover">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <span>Progresso</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex justify-center p-6">
-            <div className="relative">
-              <ProgressCircle
-                value={stats.completionRate}
-                size={140}
-                color="#7C293A"
-                strokeWidth={12}
-                className="text-burgundy/20"
-              />
-              <div className="absolute inset-0 flex items-center justify-center flex-col">
-                <span className="text-3xl font-bold text-burgundy">{Math.round(stats.completionRate)}%</span>
-                <span className="text-xs text-muted-foreground">Concluído</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="lg:col-span-2 card-hover">
-          <CardHeader>
-            <CardTitle>Progresso nos Últimos 7 Dias</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2">
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={stats.dailyProgress} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'var(--background)', 
-                    borderColor: 'var(--border)',
-                    color: 'var(--foreground)' 
-                  }}
-                />
-                <Bar dataKey="total" stackId="a" fill="#C4CBCA" name="Total" />
-                <Bar dataKey="completed" stackId="b" fill="#7C293A" name="Concluídas" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="grid gap-6 sm:grid-cols-2">
-        <Card className="card-hover">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <TagIcon className="h-5 w-5 mr-2" />
-              <span>Tags Mais Usadas</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {stats.tagStats.length > 0 ? (
-              <div className="space-y-4">
-                {stats.tagStats.map((tag, index) => (
-                  <div key={tag.name} className="flex items-center">
-                    <span className="w-24 truncate">{tag.name}</span>
-                    <div className="flex-1 h-2 bg-muted ml-2 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-burgundy" 
-                        style={{ 
-                          width: `${(tag.value / stats.tagStats[0].value) * 100}%`,
-                          transition: "width 1s ease-in-out"
-                        }}
-                      />
-                    </div>
-                    <span className="ml-2 text-muted-foreground">{tag.value}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p>Nenhuma tag encontrada</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        
-        <Card className="card-hover">
-          <CardHeader>
-            <CardTitle>Distribuição de Status</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {stats.total > 0 ? (
-              <div className="flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value) => [`${value} tarefas`, '']}
-                      contentStyle={{ 
-                        backgroundColor: 'var(--background)', 
-                        borderColor: 'var(--border)',
-                        color: 'var(--foreground)' 
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p>Nenhuma tarefa encontrada</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

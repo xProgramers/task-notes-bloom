@@ -40,12 +40,6 @@ export function DatePicker({ date, onSelect, className }: DatePickerProps) {
           onSelect={onSelect}
           initialFocus
           className="p-3"
-          styles={{
-            day_button: {
-              cursor: 'pointer',
-              pointerEvents: 'auto'
-            }
-          }}
         />
       </PopoverContent>
     </Popover>
