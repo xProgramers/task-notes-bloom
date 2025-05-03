@@ -3,6 +3,7 @@ import { EnhancedDashboardSummary } from "@/components/dashboard/EnhancedDashboa
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { TaskNotification } from "@/components/notifications/TaskNotification";
 import useStore from "@/store/useStore";
 import { useMemo, useEffect } from "react";
 import { Welcome } from "./Welcome";
@@ -33,6 +34,7 @@ export function Dashboard() {
       <div className="space-y-10 fade-in">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-burgundy">Dashboard</h1>
+          <TaskNotification />
         </div>
         
         <EnhancedDashboardSummary />

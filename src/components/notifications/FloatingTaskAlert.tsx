@@ -6,9 +6,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Checkbox } from "@/components/ui/checkbox";
 import useStore from "@/store/useStore";
 import { format, parse } from "date-fns";
-import { Calendar, Clock, Tag } from "lucide-react";
+import { Calendar, Clock, Tag, BellRing } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export function FloatingTaskAlert() {
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
@@ -16,6 +17,14 @@ export function FloatingTaskAlert() {
   const toggleTaskCompletion = useStore((state) => state.toggleTaskCompletion);
   const rescheduleTask = useStore((state) => state.rescheduleTask);
   const { toast } = useToast();
+  const { sendNotification, requestPermission, permission } = useNotifications();
+
+  // Request notification permission on component mount
+  useEffect(() => {
+    if (permission === 'default') {
+      requestPermission();
+    }
+  }, [permission, requestPermission]);
 
   useEffect(() => {
     // Function to check for due tasks
@@ -34,12 +43,26 @@ export function FloatingTaskAlert() {
       });
       
       if (dueTasks.length > 0 && !currentTask) {
-        setCurrentTask(dueTasks[0]);
+        const taskToShow = dueTasks[0];
+        setCurrentTask(taskToShow);
         
-        // Also show a toast notification
+        // Show in-app toast notification
         toast({
           title: "Tarefa devido agora!",
-          description: dueTasks[0].title,
+          description: taskToShow.title,
+        });
+        
+        // Send system notification when browser might be minimized
+        sendNotification(`Tarefa: ${taskToShow.title}`, {
+          body: taskToShow.description,
+          icon: '/favicon.ico',
+          requireInteraction: true, // Keep the notification until user interacts with it
+          vibrate: [100, 50, 100], // Vibration pattern for mobile devices
+          tag: `task-${taskToShow.id}`, // Unique tag to prevent duplicate notifications
+          data: {
+            taskId: taskToShow.id,
+            url: window.location.href, // Current URL to open when notification is clicked
+          },
         });
       }
     };
@@ -49,7 +72,7 @@ export function FloatingTaskAlert() {
     const intervalId = setInterval(checkDueTasks, 60000); // Check every minute
     
     return () => clearInterval(intervalId);
-  }, [tasks, currentTask, toast]);
+  }, [tasks, currentTask, toast, sendNotification]);
   
   const handleCompleteTask = async () => {
     if (currentTask) {
@@ -92,7 +115,8 @@ export function FloatingTaskAlert() {
         >
           <Card className="border-2 border-burgundy">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-burgundy">
+              <CardTitle className="text-xl font-bold text-burgundy flex items-center gap-2">
+                <BellRing className="h-5 w-5 text-burgundy animate-ping mr-1" />
                 {currentTask.title}
               </CardTitle>
             </CardHeader>

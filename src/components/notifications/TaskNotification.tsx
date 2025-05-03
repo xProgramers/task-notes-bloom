@@ -29,12 +29,16 @@ export function TaskNotification() {
       
       // Envia uma notificação de teste
       sendNotification("Notificações Ativadas", {
-        body: "Você será notificado sobre tarefas com prazo próximo",
+        body: "Você será notificado sobre tarefas mesmo quando o navegador estiver minimizado",
         icon: "/favicon.ico",
+        requireInteraction: true,
+        data: {
+          url: window.location.href,
+        },
       });
     } else {
       toast.error("Permissão negada", {
-        description: "Por favor, habilite notificações no seu navegador."
+        description: "Por favor, habilite notificações no seu navegador para não perder tarefas."
       });
     }
   };
@@ -54,7 +58,13 @@ export function TaskNotification() {
         ? `Você tem 1 tarefa para hoje: ${taskNames}` 
         : `Você tem ${tasksToday.length} tarefas para hoje, incluindo ${taskNames}`;
       
-      sendNotification("Tarefas para hoje", { body: message });
+      sendNotification("Tarefas para hoje", { 
+        body: message,
+        requireInteraction: false, // This can be a brief notification
+        data: {
+          url: window.location.href,
+        },
+      });
     }
   }, [tasks, notificationsEnabled, sendNotification]);
   
