@@ -35,7 +35,7 @@ const Index = () => {
             animate="visible"
             exit="exit"
             variants={variants}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Dashboard />
           </motion.div>
@@ -48,7 +48,7 @@ const Index = () => {
             animate="visible"
             exit="exit"
             variants={variants}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Tasks />
           </motion.div>
@@ -61,7 +61,7 @@ const Index = () => {
             animate="visible"
             exit="exit"
             variants={variants}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Notes />
           </motion.div>
@@ -74,7 +74,7 @@ const Index = () => {
             animate="visible"
             exit="exit"
             variants={variants}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <Dashboard />
           </motion.div>
