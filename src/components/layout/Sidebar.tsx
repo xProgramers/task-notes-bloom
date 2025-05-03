@@ -1,11 +1,10 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar, BookOpen, LayoutDashboard, Plus, Flower, BookOpen as Notes } from "lucide-react";
+import { Calendar, BookOpen, LayoutDashboard, Plus } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useCallback, useEffect, useState } from "react";
 import { TaskForm } from "../tasks/TaskForm";
-import { motion } from "framer-motion";
 
 export function Sidebar() {
   const activeView = useStore((state) => state.activeView);
@@ -13,12 +12,6 @@ export function Sidebar() {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  
-  // Calculate task completion stats for growth indicator
-  const tasks = useStore((state) => state.tasks);
-  const completedTasksCount = tasks.filter(task => task.status === "completed").length;
-  const totalTasks = tasks.length;
-  const completionRate = totalTasks > 0 ? (completedTasksCount / totalTasks) * 100 : 0;
 
   // Use useCallback to memoize these functions
   const checkSize = useCallback(() => {
@@ -53,26 +46,6 @@ export function Sidebar() {
     return () => window.removeEventListener("resize", checkSize);
   }, [checkSize]);
 
-  // Animation variants
-  const sidebarVariants = {
-    closed: { x: "-100%" },
-    open: { x: 0 }
-  };
-  
-  // Create a growth indicator based on task completion
-  const flowerGrowthStages = [
-    { threshold: 0, size: 16, color: "text-burgundy/30" },
-    { threshold: 20, size: 18, color: "text-burgundy/50" },
-    { threshold: 40, size: 20, color: "text-burgundy/70" },
-    { threshold: 60, size: 22, color: "text-burgundy/90" },
-    { threshold: 80, size: 24, color: "text-burgundy" },
-    { threshold: 100, size: 28, color: "text-burgundy" }
-  ];
-  
-  const currentGrowthStage = flowerGrowthStages.findLast(
-    stage => completionRate >= stage.threshold
-  ) || flowerGrowthStages[0];
-
   return (
     <>
       {/* Toggle button for mobile */}
@@ -80,7 +53,7 @@ export function Sidebar() {
         variant="outline" 
         size="icon" 
         className={cn(
-          "fixed top-4 left-4 z-50 md:hidden transition-all bg-black/40 backdrop-blur-md border-burgundy/50", 
+          "fixed top-4 left-4 z-50 md:hidden transition-all", 
           isOpen ? "left-64" : "left-4"
         )}
         onClick={toggleSidebar}
@@ -89,44 +62,22 @@ export function Sidebar() {
       </Button>
       
       {/* Sidebar */}
-      <motion.div
+      <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-black/40 backdrop-blur-md border-r border-burgundy/20 shadow-lg"
+          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-card shadow-lg transition-transform duration-300",
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
-        initial="closed"
-        animate={isOpen ? "open" : "closed"}
-        variants={sidebarVariants}
-        transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >
-        <div className="flex h-16 items-center justify-between px-6 border-b border-burgundy/20">
-          <div className="flex items-center">
-            <Flower 
-              className={cn(
-                "mr-2 transition-all duration-1000",
-                currentGrowthStage.color
-              )} 
-              size={currentGrowthStage.size}
-            />
-            <h1 className="text-xl font-bold text-burgundy">Bloom</h1>
-          </div>
-          
-          {/* Task completion indicator */}
-          <div className="h-2 w-12 bg-burgundy/20 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-burgundy"
-              initial={{ width: 0 }}
-              animate={{ width: `${completionRate}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-            />
-          </div>
+        <div className="flex h-16 items-center border-b px-6">
+          <h1 className="text-xl font-bold text-burgundy">Bloom</h1>
         </div>
         
-        <nav className="flex-1 space-y-2 px-3 py-4">
+        <nav className="flex-1 space-y-1 px-3 py-4">
           <Button
             variant={activeView === "dashboard" ? "default" : "ghost"}
             className={cn(
-              "w-full justify-start hover:bg-burgundy/10 hover:text-burgundy transition-colors duration-300",
-              activeView === "dashboard" ? "bg-burgundy text-light-gray" : "bg-transparent text-light-gray"
+              "w-full justify-start",
+              activeView === "dashboard" && "bg-burgundy text-light-gray"
             )}
             onClick={() => setActiveView("dashboard")}
           >
@@ -137,8 +88,8 @@ export function Sidebar() {
           <Button
             variant={activeView === "tasks" ? "default" : "ghost"}
             className={cn(
-              "w-full justify-start hover:bg-burgundy/10 hover:text-burgundy transition-colors duration-300",
-              activeView === "tasks" ? "bg-burgundy text-light-gray" : "bg-transparent text-light-gray"
+              "w-full justify-start",
+              activeView === "tasks" && "bg-burgundy text-light-gray"
             )}
             onClick={() => setActiveView("tasks")}
           >
@@ -149,32 +100,31 @@ export function Sidebar() {
           <Button
             variant={activeView === "notes" ? "default" : "ghost"}
             className={cn(
-              "w-full justify-start hover:bg-burgundy/10 hover:text-burgundy transition-colors duration-300",
-              activeView === "notes" ? "bg-burgundy text-light-gray" : "bg-transparent text-light-gray"
+              "w-full justify-start",
+              activeView === "notes" && "bg-burgundy text-light-gray"
             )}
             onClick={() => setActiveView("notes")}
           >
-            <Notes className="mr-2 h-4 w-4" />
+            <BookOpen className="mr-2 h-4 w-4" />
             Notas
           </Button>
         </nav>
         
-        <div className="p-4 mt-auto">
+        <div className="border-t p-4">
           <Button 
-            className="w-full bg-gradient-to-r from-burgundy to-burgundy/80 text-light-gray hover:bg-burgundy/90 group overflow-hidden relative"
+            className="w-full bg-burgundy text-light-gray hover:bg-burgundy/90"
             onClick={handleNewTask}
           >
-            <div className="absolute inset-0 bg-black/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
-            <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
-            <span className="relative z-10">Nova Tarefa</span>
+            <Plus className="mr-2 h-4 w-4" />
+            Nova Tarefa
           </Button>
         </div>
-      </motion.div>
+      </div>
       
       {/* Overlay to close sidebar on mobile */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
           onClick={toggleSidebar}
         />
       )}
