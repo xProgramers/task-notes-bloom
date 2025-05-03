@@ -2,6 +2,7 @@
 import { NoteList } from "@/components/notes/NoteList";
 import useStore from "@/store/useStore";
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 
 export function Notes() {
   const notes = useStore((state) => state.notes);
@@ -13,16 +14,51 @@ export function Notes() {
     fetchNotes();
   }, [fetchNotes]);
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    }
+  };
+  
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-burgundy">Notas</h1>
+    <motion.div 
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.h1 
+        className="text-3xl font-bold bg-gradient-to-r from-soft-teal to-bright-coral bg-clip-text text-transparent"
+        variants={itemVariants}
+      >
+        Notas
+      </motion.h1>
       
-      <NoteList 
-        notes={notes} 
-        title="Todas as Notas" 
-        emptyMessage="Nenhuma nota encontrada. Crie sua primeira nota!"
-        isLoading={isLoading}
-      />
-    </div>
+      <motion.div variants={itemVariants}>
+        <NoteList 
+          notes={notes} 
+          title="Todas as Notas" 
+          emptyMessage="Nenhuma nota encontrada. Crie sua primeira nota!"
+          isLoading={isLoading}
+        />
+      </motion.div>
+    </motion.div>
   );
 }

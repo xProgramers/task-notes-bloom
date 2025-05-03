@@ -5,65 +5,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 195 47% 95%;
+    --foreground: 200 38% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 200 38% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 200 38% 14%;
 
-    --primary: 343 51% 33%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 176 51% 56%;
+    --primary-foreground: 200 38% 14%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 350 100% 70%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 195 47% 90%;
+    --muted-foreground: 200 38% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 131 55% 73%;
+    --accent-foreground: 200 38% 14%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 343 51% 33%;
+    --border: 195 47% 85%;
+    --input: 195 47% 85%;
+    --ring: 176 51% 56%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 210 9% 5%;
-    --foreground: 196 5% 79%;
+    --background: 200 38% 14%;
+    --foreground: 195 47% 90%;
 
-    --card: 210 9% 8%;
-    --card-foreground: 196 5% 79%;
+    --card: 200 35% 18%;
+    --card-foreground: 195 47% 90%;
 
-    --popover: 210 9% 5%;
-    --popover-foreground: 196 5% 79%;
+    --popover: 200 38% 14%;
+    --popover-foreground: 195 47% 90%;
 
-    --primary: 343 51% 33%;
-    --primary-foreground: 196 5% 79%;
+    --primary: 176 51% 56%;
+    --primary-foreground: 200 38% 14%;
 
-    --secondary: 210 9% 13%;
-    --secondary-foreground: 196 5% 79%;
+    --secondary: 350 100% 70%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 9% 13%;
-    --muted-foreground: 196 5% 59%;
+    --muted: 200 35% 25%;
+    --muted-foreground: 195 47% 70%;
 
-    --accent: 210 9% 13%;
-    --accent-foreground: 196 5% 79%;
+    --accent: 131 55% 73%;
+    --accent-foreground: 200 38% 14%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 196 5% 79%;
+    --destructive-foreground: 195 47% 90%;
 
-    --border: 210 9% 13%;
-    --input: 210 9% 13%;
-    --ring: 343 51% 33%;
+    --border: 200 35% 25%;
+    --input: 200 35% 25%;
+    --ring: 176 51% 56%;
   }
 }
 
@@ -73,7 +73,8 @@
   }
 
   body {
-    @apply bg-deep-black text-light-gray;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   /* Transição suave entre temas */
@@ -87,51 +88,38 @@
     transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
   }
 
-  /* Classes utilitárias adicionais */
-  .btn-primary {
-    @apply bg-burgundy text-light-gray hover:bg-burgundy/90 transition-colors;
-  }
-
+  /* Classes utilitárias */
   .card-hover {
-    @apply transition-all duration-200 hover:scale-[1.02] hover:shadow-md;
+    @apply transition-all duration-300 hover:shadow-lg hover:translate-y-[-5px];
   }
 
-  .animate-in {
-    @apply animate-slide-in;
+  .floating-card {
+    @apply rounded-xl bg-card shadow-lg animate-float;
   }
 
-  /* Novas classes para tags coloridas */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 rounded-xl shadow-xl;
+  }
+
+  .bubble {
+    @apply absolute rounded-full bg-primary/20 animate-pulse-gentle;
+  }
+
+  /* Novas classes para tags coloridas com melhor design */
   .tag-red {
-    @apply bg-red-500/20 text-red-700 dark:text-red-400;
+    @apply bg-bright-coral/20 text-bright-coral rounded-full px-3 py-1;
   }
   .tag-blue {
-    @apply bg-blue-500/20 text-blue-700 dark:text-blue-400;
+    @apply bg-soft-teal/20 text-soft-teal rounded-full px-3 py-1;
   }
   .tag-green {
-    @apply bg-green-500/20 text-green-700 dark:text-green-400;
+    @apply bg-fresh-mint/20 text-fresh-mint rounded-full px-3 py-1;
   }
   .tag-purple {
-    @apply bg-purple-500/20 text-purple-700 dark:text-purple-400;
+    @apply bg-purple-400/20 text-purple-400 rounded-full px-3 py-1;
   }
   .tag-amber {
-    @apply bg-amber-500/20 text-amber-700 dark:text-amber-400;
-  }
-
-  /* Novas animações */
-  .fade-in {
-    animation: fadeIn 0.5s ease-in-out forwards;
-  }
-
-  .slide-up {
-    animation: slideUp 0.3s ease-out forwards;
-  }
-
-  .pulse {
-    animation: pulse 2s infinite;
-  }
-
-  .bounce {
-    animation: bounce 1s infinite;
+    @apply bg-warm-sand/20 text-amber-600 rounded-full px-3 py-1;
   }
 
   /* Classe para tema em transição */
@@ -153,21 +141,6 @@
   .react-calendar {
     @apply pointer-events-auto !important;
   }
-  
-  /* Melhor legibilidade para o modo claro */
-  :root:not(.dark) {
-    --foreground: 222.2 84% 4.9%;
-    --card-foreground: 222.2 84% 4.9%;
-    --muted-foreground: 222.2 47.4% 11.2%;
-  }
-  
-  :root:not(.dark) body {
-    @apply text-gray-900;
-  }
-  
-  :root:not(.dark) .text-muted-foreground {
-    @apply text-gray-700;
-  }
 }
 
 @keyframes fadeIn {
@@ -187,23 +160,5 @@
   100% {
     transform: translateY(0);
     opacity: 1;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
   }
 }

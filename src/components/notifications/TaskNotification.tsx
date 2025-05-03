@@ -1,11 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/components/ui/toast";
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useStore from "@/store/useStore";
 import { Task } from "@/types";
 import { useNotifications } from "@/hooks/useNotifications";
+import { motion } from "framer-motion";
 
 export function TaskNotification() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -23,7 +24,8 @@ export function TaskNotification() {
     setNotificationsEnabled(granted);
     
     if (granted) {
-      toast.success("Notificações ativadas", {
+      toast({
+        title: "Notificações ativadas",
         description: "Você receberá alertas para tarefas próximas do prazo."
       });
       
@@ -37,7 +39,8 @@ export function TaskNotification() {
         },
       });
     } else {
-      toast.error("Permissão negada", {
+      toast({
+        title: "Permissão negada",
         description: "Por favor, habilite notificações no seu navegador para não perder tarefas."
       });
     }
@@ -60,7 +63,7 @@ export function TaskNotification() {
       
       sendNotification("Tarefas para hoje", { 
         body: message,
-        requireInteraction: false, // This can be a brief notification
+        requireInteraction: false,
         data: {
           url: window.location.href,
         },
@@ -71,19 +74,24 @@ export function TaskNotification() {
   if (!isSupported) return null;
   
   return (
-    <Button 
-      variant="ghost" 
-      size="icon"
-      onClick={enableNotifications}
-      disabled={notificationsEnabled}
-      className="hover:bg-burgundy/10"
-      title={notificationsEnabled ? "Notificações ativadas" : "Ativar notificações"}
+    <motion.div 
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
     >
-      {notificationsEnabled ? (
-        <Bell className="h-5 w-5 text-burgundy animate-pulse" />
-      ) : (
-        <BellOff className="h-5 w-5" />
-      )}
-    </Button>
+      <Button 
+        variant="outline" 
+        size="icon"
+        onClick={enableNotifications}
+        disabled={notificationsEnabled}
+        className="bg-card/50 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all"
+        title={notificationsEnabled ? "Notificações ativadas" : "Ativar notificações"}
+      >
+        {notificationsEnabled ? (
+          <Bell className="h-5 w-5 text-bright-coral animate-pulse" />
+        ) : (
+          <BellOff className="h-5 w-5" />
+        )}
+      </Button>
+    </motion.div>
   );
 }

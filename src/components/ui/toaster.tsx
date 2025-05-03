@@ -8,7 +8,6 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
-import { FloatingTaskAlert } from "@/components/notifications/FloatingTaskAlert"
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -30,7 +29,6 @@ export function Toaster() {
         )
       })}
       <ToastViewport />
-      <FloatingTaskAlert />
     </ToastProvider>
   )
 }

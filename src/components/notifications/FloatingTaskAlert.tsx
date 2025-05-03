@@ -104,45 +104,45 @@ export function FloatingTaskAlert() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => null}>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => null}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="max-w-lg w-full mx-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <Card className="border-2 border-burgundy">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-burgundy flex items-center gap-2">
-                <BellRing className="h-5 w-5 text-burgundy animate-ping mr-1" />
+          <Card className="border-2 border-bright-coral shadow-lg overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-soft-teal/20 to-bright-coral/20 backdrop-blur-md">
+              <CardTitle className="text-xl font-bold flex items-center gap-2">
+                <BellRing className="h-5 w-5 text-bright-coral animate-ping mr-1" />
                 {currentTask.title}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-muted/20 p-4 rounded-md whitespace-pre-wrap">
+            <CardContent className="space-y-4 pt-6">
+              <div className="bg-muted/20 p-4 rounded-xl whitespace-pre-wrap">
                 {currentTask.description}
               </div>
               
               <div className="flex flex-col space-y-2">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Calendar className="h-4 w-4 text-soft-teal" />
                   <span className="text-sm">Data: {currentTask.dueDate}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Clock className="h-4 w-4 text-soft-teal" />
                   <span className="text-sm">Horário: {currentTask.dueTime}</span>
                 </div>
                 
-                {currentTask.tags.length > 0 && (
+                {currentTask.tags && currentTask.tags.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <Tag className="h-4 w-4 text-soft-teal" />
                     <div className="flex flex-wrap gap-1">
                       {currentTask.tags.map((tag) => (
                         <span 
                           key={tag} 
-                          className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-burgundy/10 text-burgundy"
+                          className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tag-blue"
                         >
                           {tag}
                         </span>
@@ -166,7 +166,11 @@ export function FloatingTaskAlert() {
                   Marcar como concluída
                 </label>
               </div>
-              <Button variant="outline" onClick={handleSnoozeTask}>
+              <Button 
+                variant="outline" 
+                onClick={handleSnoozeTask}
+                className="bg-card hover:bg-muted/20"
+              >
                 Adiar 5 minutos
               </Button>
             </CardFooter>

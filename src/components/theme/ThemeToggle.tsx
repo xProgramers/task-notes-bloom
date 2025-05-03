@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { TaskNotification } from "@/components/notifications/TaskNotification";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -29,16 +28,11 @@ export function ThemeToggle() {
 
   return (
     <div className="fixed top-4 right-6 flex gap-2 z-50">
-      {/* Botão de notificação à esquerda do tema */}
-      {user && !isLoginPage && (
-        <TaskNotification />
-      )}
-      
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
         onClick={toggleTheme}
-        className="theme-toggle-btn flex items-center justify-center"
+        className="theme-toggle-btn flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all"
         title={theme === "light" ? "Modo escuro" : "Modo claro"}
       >
         {theme === "light" ? (
@@ -50,11 +44,11 @@ export function ThemeToggle() {
       
       {user && !isLoginPage && (
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
           onClick={signOut}
           title="Sair"
-          className="hover:bg-burgundy/10 flex items-center justify-center"
+          className="hover:bg-destructive/10 flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all"
         >
           <LogOut className="h-5 w-5" />
         </Button>

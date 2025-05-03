@@ -8,6 +8,7 @@ import useStore from "@/store/useStore";
 import { useMemo, useEffect } from "react";
 import { Welcome } from "./Welcome";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 
 export function Dashboard() {
   // Get all tasks first
@@ -27,28 +28,69 @@ export function Dashboard() {
     return tasks.filter(task => task.dueDate === today);
   }, [tasks]);
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    }
+  };
+  
   return (
     <>
       <Welcome />
       
-      <div className="space-y-10 fade-in">
+      <motion.div 
+        className="space-y-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-burgundy">Dashboard</h1>
+          <motion.h1 
+            className="text-3xl font-bold bg-gradient-to-r from-soft-teal to-bright-coral bg-clip-text text-transparent"
+            variants={itemVariants}
+          >
+            Dashboard
+          </motion.h1>
           <TaskNotification />
         </div>
         
-        <EnhancedDashboardSummary />
+        <motion.div variants={itemVariants}>
+          <EnhancedDashboardSummary />
+        </motion.div>
         
-        <QuickActions />
+        <motion.div variants={itemVariants}>
+          <QuickActions />
+        </motion.div>
         
-        <TaskList
-          tasks={todayTasks}
-          title="Tarefas para Hoje"
-          emptyMessage="Nenhuma tarefa para hoje."
-        />
+        <motion.div variants={itemVariants}>
+          <TaskList
+            tasks={todayTasks}
+            title="Tarefas para Hoje"
+            emptyMessage="Nenhuma tarefa para hoje."
+          />
+        </motion.div>
         
-        <DashboardStats />
-      </div>
+        <motion.div variants={itemVariants}>
+          <DashboardStats />
+        </motion.div>
+      </motion.div>
     </>
   );
 }
