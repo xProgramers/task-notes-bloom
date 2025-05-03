@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Task } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -57,7 +56,6 @@ export function FloatingTaskAlert() {
           body: taskToShow.description,
           icon: '/favicon.ico',
           requireInteraction: true, // Keep the notification until user interacts with it
-          vibrate: [100, 50, 100], // Vibration pattern for mobile devices
           tag: `task-${taskToShow.id}`, // Unique tag to prevent duplicate notifications
           data: {
             taskId: taskToShow.id,
