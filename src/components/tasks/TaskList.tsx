@@ -24,7 +24,9 @@ export function TaskList({ tasks, title = "Tarefas", emptyMessage = "Nenhuma tar
         (task) =>
           task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          // Improved tag search - match individual tags
           task.tags.some((tag) =>
+            tag.toLowerCase() === searchQuery.toLowerCase() || 
             tag.toLowerCase().includes(searchQuery.toLowerCase())
           )
       )

@@ -6,6 +6,7 @@ import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import useStore from "@/store/useStore";
 import { useMemo, useEffect } from "react";
 import { Welcome } from "./Welcome";
+import { format } from "date-fns";
 
 export function Dashboard() {
   // Get all tasks first
@@ -21,7 +22,7 @@ export function Dashboard() {
   
   // Then filter with useMemo
   const todayTasks = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = format(new Date(), "yyyy-MM-dd");
     return tasks.filter(task => task.dueDate === today);
   }, [tasks]);
   
