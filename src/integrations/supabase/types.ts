@@ -86,6 +86,7 @@ export type Database = {
           due_date: string
           due_time: string
           id: string
+          recurrence: string
           status: string
           tags: string[]
           title: string
@@ -99,6 +100,7 @@ export type Database = {
           due_date: string
           due_time: string
           id?: string
+          recurrence?: string
           status?: string
           tags?: string[]
           title: string
@@ -112,6 +114,7 @@ export type Database = {
           due_date?: string
           due_time?: string
           id?: string
+          recurrence?: string
           status?: string
           tags?: string[]
           title?: string

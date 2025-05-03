@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
-import { Task } from "@/types";
+import { Task, TaskRecurrence } from "@/types";
 import { useState, useEffect } from "react";
 import useStore from "@/store/useStore";
 import { parse, format } from "date-fns";
@@ -20,7 +20,9 @@ import { toast } from "sonner";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -46,10 +48,10 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   };
-  const [dueTime, setDueTime] = useState(getCurrentTime());
   
+  const [dueTime, setDueTime] = useState(getCurrentTime());
   const [tags, setTags] = useState("");
-  const [recurrence, setRecurrence] = useState<"none" | "daily" | "weekly" | "yearly">("none");
+  const [recurrence, setRecurrence] = useState<TaskRecurrence>("none");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Reseta o form quando o modal fecha
@@ -186,16 +188,22 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
               <Label htmlFor="recurrence">Recorrência</Label>
               <Select 
                 value={recurrence}
-                onValueChange={(value) => setRecurrence(value as "none" | "daily" | "weekly" | "yearly")}
+                onValueChange={(value) => setRecurrence(value as TaskRecurrence)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecionar recorrência" />
                 </SelectTrigger>
                 <SelectContent className="bg-background">
-                  <SelectItem value="none">Nenhuma</SelectItem>
-                  <SelectItem value="daily">Diária</SelectItem>
-                  <SelectItem value="weekly">Semanal</SelectItem>
-                  <SelectItem value="yearly">Anual</SelectItem>
+                  <SelectGroup>
+                    <SelectLabel>Recorrência</SelectLabel>
+                    <SelectItem value="none">Nenhuma</SelectItem>
+                    <SelectGroup>
+                      <SelectLabel>Intervalos</SelectLabel>
+                      <SelectItem value="daily">Diária</SelectItem>
+                      <SelectItem value="weekly">Semanal</SelectItem>
+                      <SelectItem value="yearly">Anual</SelectItem>
+                    </SelectGroup>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>

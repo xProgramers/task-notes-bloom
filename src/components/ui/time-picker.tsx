@@ -30,14 +30,22 @@ export function TimePicker({ value, onChange, className }: TimePickerProps) {
     i.toString().padStart(2, '0')
   );
 
-  // Update hours and minutes when value changes
+  // Initialize with current time if value is not provided
   useEffect(() => {
     if (value) {
       const [h, m] = value.split(':');
       setHours(h);
       setMinutes(m);
+    } else {
+      // Set to current time
+      const now = new Date();
+      const currentHours = now.getHours().toString().padStart(2, '0');
+      const currentMinutes = now.getMinutes().toString().padStart(2, '0');
+      setHours(currentHours);
+      setMinutes(currentMinutes);
+      onChange(`${currentHours}:${currentMinutes}`);
     }
-  }, [value]);
+  }, [value, onChange]);
 
   // Update value when hours or minutes change
   const updateTime = (newHours: string, newMinutes: string) => {
