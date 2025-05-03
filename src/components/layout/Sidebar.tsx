@@ -69,9 +69,13 @@ export function Sidebar() {
     { threshold: 100, size: 28, color: "text-burgundy" }
   ];
   
-  const currentGrowthStage = flowerGrowthStages.findLast(
-    stage => completionRate >= stage.threshold
-  ) || flowerGrowthStages[0];
+  // Replace findLast with a compatible alternative
+  const currentGrowthStage = flowerGrowthStages
+    .filter(stage => completionRate >= stage.threshold)
+    .reduce((latest, current) => 
+      current.threshold > latest.threshold ? current : latest, 
+      flowerGrowthStages[0]
+    );
 
   return (
     <>
