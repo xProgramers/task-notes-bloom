@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/hooks/use-toast";
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useStore from "@/store/useStore";
