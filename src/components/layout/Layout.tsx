@@ -1,7 +1,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { ThemeToggle } from "../theme/ThemeToggle";
+import { TopBar } from "./TopBar";
 import { motion } from "framer-motion";
 
 interface LayoutProps {
@@ -41,7 +41,7 @@ export function Layout({ children }: LayoutProps) {
       
       <div className="relative z-10 flex min-h-screen">
         <Sidebar />
-        <ThemeToggle />
+        <TopBar />
         
         <motion.main 
           initial={{ opacity: 0 }}

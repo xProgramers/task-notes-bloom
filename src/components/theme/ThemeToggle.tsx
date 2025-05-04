@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { TaskNotification } from "../notifications/TaskNotification";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -29,8 +28,6 @@ export function ThemeToggle() {
 
   return (
     <div className="fixed top-4 right-6 flex gap-2 z-50">
-      {!isLoginPage && <TaskNotification />}
-      
       <Button
         variant="outline"
         size="icon"

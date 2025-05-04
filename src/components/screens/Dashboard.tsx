@@ -3,7 +3,6 @@ import { EnhancedDashboardSummary } from "@/components/dashboard/EnhancedDashboa
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { TaskList } from "@/components/tasks/TaskList";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { TaskNotification } from "@/components/notifications/TaskNotification";
 import useStore from "@/store/useStore";
 import { useMemo, useEffect } from "react";
 import { Welcome } from "./Welcome";
@@ -61,15 +60,12 @@ export function Dashboard() {
         initial="hidden"
         animate="visible"
       >
-        <div className="flex justify-between items-center">
-          <motion.h1 
-            className="text-3xl font-bold bg-gradient-to-r from-soft-teal to-bright-coral bg-clip-text text-transparent"
-            variants={itemVariants}
-          >
-            Dashboard
-          </motion.h1>
-          <TaskNotification />
-        </div>
+        <motion.h1 
+          className="text-3xl font-bold bg-gradient-to-r from-soft-teal to-bright-coral bg-clip-text text-transparent"
+          variants={itemVariants}
+        >
+          Dashboard
+        </motion.h1>
         
         <motion.div variants={itemVariants}>
           <EnhancedDashboardSummary />
