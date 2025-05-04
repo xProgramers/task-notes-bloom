@@ -83,11 +83,11 @@ export function TaskNotification() {
         size="icon"
         onClick={enableNotifications}
         disabled={notificationsEnabled}
-        className="bg-card/50 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all"
+        className="bg-card/50 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all z-50"
         title={notificationsEnabled ? "Notificações ativadas" : "Ativar notificações"}
       >
         {notificationsEnabled ? (
-          <Bell className="h-5 w-5 text-bright-coral animate-pulse" />
+          <Bell className="h-5 w-5 text-primary animate-pulse" />
         ) : (
           <BellOff className="h-5 w-5" />
         )}
