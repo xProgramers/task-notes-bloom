@@ -27,7 +27,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <div className="fixed top-4 right-6 flex gap-2 z-50">
+    <div className="flex gap-2">
       <Button
         variant="outline"
         size="icon"
