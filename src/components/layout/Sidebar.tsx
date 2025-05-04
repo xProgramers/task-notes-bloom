@@ -7,7 +7,8 @@ import {
   BookOpen, 
   Plus,
   Leaf,
-  Sparkles 
+  Sparkles,
+  CalendarDays 
 } from "lucide-react";
 import useStore from "@/store/useStore";
 import { useCallback, useEffect, useState } from "react";
@@ -166,6 +167,18 @@ export function Sidebar() {
           >
             <BookOpen className="mr-2 h-5 w-5" />
             Notas
+          </Button>
+          
+          <Button
+            variant={activeView === "calendar" ? "default" : "ghost"}
+            className={cn(
+              "w-full justify-start rounded-xl mb-2 hover:bg-primary/10 transition-all",
+              activeView === "calendar" && "bg-primary/20 text-primary"
+            )}
+            onClick={() => setActiveView("calendar")}
+          >
+            <CalendarDays className="mr-2 h-5 w-5" />
+            Calendário
           </Button>
         </nav>
         

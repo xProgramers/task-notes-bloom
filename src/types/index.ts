@@ -1,6 +1,6 @@
 
 export type TaskStatus = 'pending' | 'completed' | 'rescheduled';
-export type TaskRecurrence = 'none' | 'daily' | 'weekly' | 'yearly';
+export type TaskRecurrence = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface Task {
   id: string;

@@ -201,6 +201,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
                       <SelectLabel>Intervalos</SelectLabel>
                       <SelectItem value="daily">Diária</SelectItem>
                       <SelectItem value="weekly">Semanal</SelectItem>
+                      <SelectItem value="monthly">Mensal</SelectItem>
                       <SelectItem value="yearly">Anual</SelectItem>
                     </SelectGroup>
                   </SelectGroup>
@@ -231,7 +232,7 @@ export function TaskForm({ isOpen, onClose, task }: TaskFormProps) {
             </Button>
             <Button 
               type="submit"
-              className="bg-burgundy text-light-gray"
+              className="bg-primary text-primary-foreground"
               disabled={isSubmitting}
             >
               {isSubmitting 

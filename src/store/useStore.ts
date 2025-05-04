@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Task, Note, TaskStats, TaskRecurrence } from '../types';
@@ -8,7 +7,7 @@ import { addDays, addWeeks, addYears, format } from 'date-fns';
 interface StoreState {
   tasks: Task[];
   notes: Note[];
-  activeView: 'dashboard' | 'tasks' | 'notes';
+  activeView: 'dashboard' | 'tasks' | 'notes' | 'calendar';
   isLoading: boolean;
   
   // Actions para tarefas
@@ -29,7 +28,7 @@ interface StoreState {
   deleteNote: (id: string) => Promise<void>;
   
   // Actions para navegação
-  setActiveView: (view: 'dashboard' | 'tasks' | 'notes') => void;
+  setActiveView: (view: 'dashboard' | 'tasks' | 'notes' | 'calendar') => void;
   
   // Getters para estatísticas e consultas
   getTaskStats: () => TaskStats;

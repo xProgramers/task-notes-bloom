@@ -3,6 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Dashboard } from "@/components/screens/Dashboard";
 import { Tasks } from "@/components/screens/Tasks";
 import { Notes } from "@/components/screens/Notes";
+import { CalendarView } from "@/components/screens/CalendarView";
 import useStore from "@/store/useStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
@@ -64,6 +65,19 @@ const Index = () => {
             transition={{ duration: 0.3 }}
           >
             <Notes />
+          </motion.div>
+        );
+      case "calendar":
+        return (
+          <motion.div
+            key="calendar"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={variants}
+            transition={{ duration: 0.3 }}
+          >
+            <CalendarView />
           </motion.div>
         );
       default:
